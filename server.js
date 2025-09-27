@@ -18,7 +18,7 @@ app.use(helmet());
 // CORS configuration
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://medical-report-simplifier-huivxn4ah.vercel.app', 'https://medical-report-simplifier.vercel.app'] 
+        ? ['https://medical-report-simplifier-a324b3har.vercel.app', 'https://medical-report-simplifier.vercel.app'] 
         : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true
 }));
@@ -31,7 +31,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Health check endpoint

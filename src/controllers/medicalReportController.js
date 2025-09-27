@@ -23,7 +23,7 @@ class MedicalReportController {
             // Determine input type and prepare data
             if (req.file) {
                 type = 'image';
-                input = { path: req.file.path };
+                input = { buffer: req.file.buffer };
             } else if (req.body.text) {
                 type = 'text';
                 input = { text: req.body.text };
@@ -57,7 +57,7 @@ class MedicalReportController {
             let result;
 
             if (req.file) {
-                result = await ocrService.extractFromImage(req.file.path);
+                result = await ocrService.extractFromImage(req.file.buffer);
             } else if (req.body.text) {
                 result = await ocrService.extractFromText(req.body.text);
             } else {

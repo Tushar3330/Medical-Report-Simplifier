@@ -111,10 +111,10 @@ class MedicalReportService {
     async extractTestData(input, type) {
         try {
             if (type === 'image') {
-                if (!input.path) {
-                    throw new Error('Image file path is required');
+                if (!input.buffer) {
+                    throw new Error('Image buffer is required');
                 }
-                return await ocrService.extractFromImage(input.path);
+                return await ocrService.extractFromImage(input.buffer);
             } else if (type === 'text') {
                 if (!input.text) {
                     throw new Error('Text content is required');

@@ -10,34 +10,21 @@ class OCRService {
 
     /**
      * Extract text from image using OCR
-     * @param {string} imagePath - Path to the image file
+     * @param {Buffer|string} imageInput - Image buffer or path to the image file
      * @returns {Promise<Object>} Extracted text with confidence score
      */
-    async extractFromImage(imagePath) {
+    async extractFromImage(imageInput) {
         try {
-            logger.info(`Starting OCR extraction for image: ${imagePath}`);
+            logger.info(`Starting OCR extraction for image`);
 
-            // Preprocess image for better OCR results
-            const processedImagePath = await this.preprocessImage(imagePath);
-
-            // Perform OCR
-            const { data } = await Tesseract.recognize(processedImagePath, 'eng', {
+            // Perform OCR directly on buffer or path
+            const { data } = await Tesseract.recognize(imageInput, 'eng', {
                 logger: m => {
                     if (m.status === 'recognizing text') {
                         logger.debug(`OCR Progress: ${Math.round(m.progress * 100)}%`);
                     }
                 }
             });
-
-            // Clean up processed image if it's different from original
-            if (processedImagePath !== imagePath) {
-                fs.unlinkSync(processedImagePath);
-            }
-
-            // Clean up original uploaded file
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
 
             const extractedText = data.text.trim();
             const confidence = data.confidence / 100; // Convert to 0-1 scale
