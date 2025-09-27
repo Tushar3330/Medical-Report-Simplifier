@@ -20,9 +20,9 @@ npm start
 
 ## 🌐 Live Application - Ready for Interviews!
 
-🚀 **Live Demo**: [https://medical-report-simplifier-98svbl5mw.vercel.app](https://medical-report-simplifier-98svbl5mw.vercel.app)  
-**✅ API Endpoint**: https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process  
-**✅ Health Check**: https://medical-report-simplifier-98svbl5mw.vercel.app/health  
+🚀 **Live Demo**: [https://medical-report-simplifier-rnu4xmomw.vercel.app](https://medical-report-simplifier-rnu4xmomw.vercel.app)  
+**✅ API Endpoint**: https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process  
+**✅ Health Check**: https://medical-report-simplifier-rnu4xmomw.vercel.app/health  
 **💻 Local Dev**: http://localhost:3000
 
 > **🎯 Perfect for Interviews**: Share the live URL directly - no setup required!
@@ -126,9 +126,9 @@ curl -X POST http://localhost:3000/api/medical-reports/summarize \
 **Performance**: Auto-scaling, Global CDN, HTTPS enabled  
 
 ### 🌐 **Live URLs (Ready for Interview Demos)**
-- **Frontend**: https://medical-report-simplifier-98svbl5mw.vercel.app  
-- **API**: https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process  
-- **Health**: https://medical-report-simplifier-98svbl5mw.vercel.app/health  
+- **Frontend**: https://medical-report-simplifier-rnu4xmomw.vercel.app  
+- **API**: https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process  
+- **Health**: https://medical-report-simplifier-rnu4xmomw.vercel.app/health  
 
 ### 🎯 **Deployment Highlights**
 ✅ **Zero-Config Deployment**: Automatic build & deployment  
@@ -173,32 +173,32 @@ Step 3: Patient Summary → Step 4: Final JSON Assembly
 
 ```bash
 # Health check - Test if the service is running
-curl https://medical-report-simplifier-98svbl5mw.vercel.app/health
+curl https://medical-report-simplifier-rnu4xmomw.vercel.app/health
 # Expected: {"status":"ok","timestamp":"2025-09-27T11:55:48.509Z","uptime":111.59}
 
 # Normal blood test
 curl -X POST -H "Content-Type: application/json" \
   -d '{"type":"text","text":"Hemoglobin: 14.5 g/dL"}' \
-  https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process
+  https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process
 
 # Multiple abnormal values - Real medical report scenario
 curl -X POST -H "Content-Type: application/json" \
   -d '{"type":"text","text":"CBC: Hemoglobin 8.5 g/dL (Low), WBC 15,200 /uL (High)"}' \
-  https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process
+  https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process
 
 # Error handling - Test guardrails
 curl -X POST -H "Content-Type: application/json" \
   -d '{"type":"text","text":"No medical data here"}' \
-  https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process
+  https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process
 
 # Complex medical panel
 curl -X POST -H "Content-Type: application/json" \
   -d '{"type":"text","text":"CBC: Hemoglobin 10.2 g/dL (Low), WBC 11,200 /uL (High), Glucose 180 mg/dL (High)"}' \
-  https://medical-report-simplifier-98svbl5mw.vercel.app/api/medical-reports/process
+  https://medical-report-simplifier-rnu4xmomw.vercel.app/api/medical-reports/process
 ```
 
 ### **📱 Frontend Testing**
-- Open https://medical-report-simplifier-98svbl5mw.vercel.app in your browser
+- Open https://medical-report-simplifier-rnu4xmomw.vercel.app in your browser
 - Test drag-and-drop file upload
 - Try both text input and image upload
 - See real-time processing and results
@@ -263,7 +263,7 @@ This project demonstrates **exceeding expectations** by delivering:
 ✅ **Code Submission** → Delivered **Live Application** accessible globally  
 
 ### 🚀 **Ready for Technical Interviews**
-- **🌐 Live Demo**: https://medical-report-simplifier-98svbl5mw.vercel.app
+- **🌐 Live Demo**: https://medical-report-simplifier-rnu4xmomw.vercel.app
 - **📋 API Testing**: All endpoints working and documented
 - **💻 Source Code**: https://github.com/Tushar3330/Medical-Report-Simplifier  
 - **🎯 Interview Script**: Complete curl examples provided above

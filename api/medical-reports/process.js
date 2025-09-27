@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
 
   try {
     // Handle file upload
-    const uploadMiddleware = upload.single('file');
+    const uploadMiddleware = upload.single('image');
     
     await new Promise((resolve, reject) => {
       uploadMiddleware(req, res, (err) => {
