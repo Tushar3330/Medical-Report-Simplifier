@@ -94,10 +94,43 @@ const validateProcessReport = (req, res, next) => {
     next();
 };
 
+// Simple validation function for serverless
+const validateRequest = (req, res, next) => {
+    try {
+        // Skip validation if file upload (handled by multer)
+        if (req.file) {
+            req.body.type = 'image';
+            return true;
+        }
+
+        // Use the proper processReportSchema that supports type field
+        const { error } = processReportSchema.validate(req.body);
+        if (error) {
+            console.log('Process report validation error:', error.details);
+            res.status(400).json({
+                status: 'error',
+                message: error.details[0].message,
+                field: error.details[0].path[0]
+            });
+            return false;
+        }
+        
+        return true;
+    } catch (err) {
+        console.error('Validation error:', err);
+        res.status(400).json({
+            status: 'error',
+            message: 'Validation failed'
+        });
+        return false;
+    }
+};
+
 module.exports = {
     validateTextInput,
     validateNormalizeTests,
     validateProcessReport,
+    validateRequest,
     textInputSchema,
     normalizeTestsSchema,
     processReportSchema
