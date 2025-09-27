@@ -17,14 +17,26 @@ class OCRService {
         try {
             logger.info(`Starting OCR extraction for image`);
 
-            // Perform OCR directly on buffer or path
-            const { data } = await Tesseract.recognize(imageInput, 'eng', {
+            // Create a timeout promise
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('OCR processing timeout after 25 seconds')), 25000);
+            });
+
+            // Optimized OCR settings for faster processing
+            const ocrPromise = Tesseract.recognize(imageInput, 'eng', {
                 logger: m => {
                     if (m.status === 'recognizing text') {
                         logger.debug(`OCR Progress: ${Math.round(m.progress * 100)}%`);
                     }
-                }
+                },
+                // Optimize for speed
+                tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
+                tessedit_ocr_engine_mode: Tesseract.OEM.LSTM_ONLY,
+                preserve_interword_spaces: '1'
             });
+
+            // Race between OCR and timeout
+            const { data } = await Promise.race([ocrPromise, timeoutPromise]);
 
             const extractedText = data.text.trim();
             const confidence = data.confidence / 100; // Convert to 0-1 scale
@@ -46,6 +58,18 @@ class OCRService {
 
         } catch (error) {
             logger.error('OCR extraction failed:', error);
+            
+            // If OCR fails or times out, provide a fallback response
+            if (error.message.includes('timeout')) {
+                logger.warn('OCR timed out, providing fallback response');
+                return {
+                    tests_raw: ['OCR processing timed out - please try with text input or a clearer image'],
+                    confidence: 0,
+                    raw_text: 'OCR processing failed due to timeout. Please try uploading a clearer image or use the text input option instead.',
+                    error: 'timeout'
+                };
+            }
+            
             throw new Error(`OCR processing failed: ${error.message}`);
         }
     }

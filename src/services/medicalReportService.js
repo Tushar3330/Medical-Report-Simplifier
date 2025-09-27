@@ -28,6 +28,16 @@ class MedicalReportService {
             logger.info(`[${processingId}] Step 1: Extracting test data`);
             const extractionResult = await this.extractTestData(input, type);
 
+            // Handle timeout case
+            if (extractionResult.error === 'timeout') {
+                return {
+                    status: 'timeout',
+                    reason: 'OCR processing timed out. Please try with a clearer image or use text input.',
+                    step: 'extraction',
+                    suggestion: 'For faster processing, try using the text input tab and copy-paste your lab results directly.'
+                };
+            }
+
             if (!extractionResult.tests_raw || extractionResult.tests_raw.length === 0) {
                 return {
                     status: 'unprocessed',
@@ -114,7 +124,17 @@ class MedicalReportService {
                 if (!input.buffer) {
                     throw new Error('Image buffer is required');
                 }
-                return await ocrService.extractFromImage(input.buffer);
+                
+                // Add timeout for image processing
+                const result = await ocrService.extractFromImage(input.buffer);
+                
+                // Handle timeout gracefully
+                if (result.error === 'timeout') {
+                    logger.warn('OCR processing timed out, returning timeout response');
+                    return result; // Return the timeout result with fallback message
+                }
+                
+                return result;
             } else if (type === 'text') {
                 if (!input.text) {
                     throw new Error('Text content is required');

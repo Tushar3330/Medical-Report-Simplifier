@@ -190,11 +190,24 @@ class MedicalReportApp {
             return;
         }
 
-        this.showProcessing('Processing image with OCR...');
+        this.showProcessing('Uploading image...');
 
         try {
             const formData = new FormData();
             formData.append('image', this.currentFile);
+
+            // Update progress messages
+            setTimeout(() => {
+                this.updateProcessingStep('Extracting text with OCR...');
+            }, 1000);
+
+            setTimeout(() => {
+                this.updateProcessingStep('This may take up to 30 seconds for complex images...');
+            }, 5000);
+
+            setTimeout(() => {
+                this.updateProcessingStep('Still processing... Please wait...');
+            }, 15000);
 
             const response = await fetch(`${this.apiBase}/api/medical-reports/process`, {
                 method: 'POST',
@@ -206,12 +219,21 @@ class MedicalReportApp {
 
             if (result.status === 'ok') {
                 this.displayResults(result);
+            } else if (result.status === 'timeout') {
+                this.showError(
+                    `${result.reason}\n\n${result.suggestion}\n\nTip: For faster results, switch to the "Text Input" tab and copy-paste your lab values directly.`,
+                    'OCR Timeout'
+                );
             } else {
                 this.showError(result.reason || result.message || 'Image processing failed');
             }
         } catch (error) {
             this.hideProcessing();
-            this.showError(`Network error: ${error.message}`);
+            if (error.name === 'AbortError' || error.message.includes('timeout')) {
+                this.showError('Processing timed out. Please try with a clearer image or use text input for faster results.', 'Timeout Error');
+            } else {
+                this.showError(`Network error: ${error.message}`);
+            }
         }
     }
 
@@ -244,6 +266,13 @@ class MedicalReportApp {
         this.processingInterval = stepInterval;
     }
 
+    updateProcessingStep(step) {
+        const stepElement = document.getElementById('processing-step');
+        if (stepElement) {
+            stepElement.textContent = step;
+        }
+    }
+
     hideProcessing() {
         if (this.processingInterval) {
             clearInterval(this.processingInterval);
@@ -252,9 +281,16 @@ class MedicalReportApp {
         this.updateStatus('connected', 'API Connected');
     }
 
-    showError(message) {
+    showError(message, title = 'Processing Error') {
         this.hideProcessing();
-        document.getElementById('error-message').textContent = message;
+        document.getElementById('error-message').innerHTML = message.replace(/\n/g, '<br>');
+        
+        // Update error title if provided
+        const errorTitle = document.querySelector('#error-display h3');
+        if (errorTitle) {
+            errorTitle.textContent = title;
+        }
+        
         document.getElementById('error-display').classList.remove('hidden');
         document.getElementById('results-section').classList.add('hidden');
     }
