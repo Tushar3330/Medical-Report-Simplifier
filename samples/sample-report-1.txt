@@ -1,0 +1,13 @@
+CBC: Hemoglobin 10.2 g/dL (Low), WBC 11,200 /uL (High), RBC 4.2 million/uL (Normal), Platelets 250,000 /uL (Normal)
+
+BASIC METABOLIC PANEL:
+Glucose: 145 mg/dL (High)
+Creatinine: 1.1 mg/dL (Normal)
+BUN: 18 mg/dL (Normal)
+Sodium: 140 mmol/L (Normal)
+
+LIPID PROFILE:
+Total Cholesterol: 220 mg/dL (High)
+LDL Cholesterol: 150 mg/dL (High)
+HDL Cholesterol: 35 mg/dL (Low)
+Triglycerides: 180 mg/dL (Normal)

@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "medical-report-simplifier-api",
+		"name": "Medical Report Simplifier API",
+		"description": "Complete API collection for testing the AI-powered medical report simplifier service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": ["{{baseUrl}}"],
+					"path": ["health"]
+				},
+				"description": "Check if the API is running"
+			}
+		},
+		{
+			"name": "Service Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/info",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "info"]
+				},
+				"description": "Get service information and available endpoints"
+			}
+		},
+		{
+			"name": "Process Complete Report (Text)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"text\",\n  \"text\": \"CBC: Hemoglobin 10.2 g/dL (Low), WBC 11,200 /uL (High), RBC 4.2 million/uL (Normal), Platelets 250,000 /uL (Normal)\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/process",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "process"]
+				},
+				"description": "Process a complete medical report from text input"
+			}
+		},
+		{
+			"name": "Process Complete Report (Image)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": [],
+							"description": "Upload an image file containing medical report"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/process",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "process"]
+				},
+				"description": "Process a medical report from an uploaded image"
+			}
+		},
+		{
+			"name": "Step 1: Extract Tests (Text)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"text\",\n  \"text\": \"CBC: Hemoglobin 10.2 g/dL (Low), WBC 11,200 /uL (High)\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/extract",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "extract"]
+				},
+				"description": "Extract test data from text (Step 1 only)"
+			}
+		},
+		{
+			"name": "Step 2: Normalize Tests",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tests_raw\": [\n    \"Hemoglobin 10.2 g/dL (Low)\",\n    \"WBC 11200 /uL (High)\"\n  ],\n  \"confidence\": 0.80\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/normalize",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "normalize"]
+				},
+				"description": "Normalize extracted test data (Step 2 only)"
+			}
+		},
+		{
+			"name": "Step 3: Generate Summary",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tests\": [\n    {\n      \"name\": \"Hemoglobin\",\n      \"value\": 10.2,\n      \"unit\": \"g/dL\",\n      \"status\": \"low\",\n      \"ref_range\": {\"low\": 12.0, \"high\": 15.0}\n    },\n    {\n      \"name\": \"WBC\",\n      \"value\": 11200,\n      \"unit\": \"/uL\",\n      \"status\": \"high\",\n      \"ref_range\": {\"low\": 4000, \"high\": 11000}\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/summarize",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "summarize"]
+				},
+				"description": "Generate patient-friendly summary (Step 3 only)"
+			}
+		},
+		{
+			"name": "Debug: Step-by-Step Processing",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tests_raw\": [\n    \"Hemoglobin 10.2 g/dL (Low)\",\n    \"WBC 11200 /uL (High)\"\n  ],\n  \"confidence\": 0.80\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/debug",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "debug"]
+				},
+				"description": "Process step-by-step for debugging purposes"
+			}
+		},
+		{
+			"name": "Complex Medical Report",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"type\": \"text\",\n  \"text\": \"CBC: Hemoglobin 10.2 g/dL (Low), WBC 11,200 /uL (High), RBC 4.2 million/uL (Normal), Platelets 250,000 /uL (Normal)\\n\\nBASIC METABOLIC PANEL:\\nGlucose: 145 mg/dL (High)\\nCreatinine: 1.1 mg/dL (Normal)\\nBUN: 18 mg/dL (Normal)\\nSodium: 140 mmol/L (Normal)\\n\\nLIPID PROFILE:\\nTotal Cholesterol: 220 mg/dL (High)\\nLDL Cholesterol: 150 mg/dL (High)\\nHDL Cholesterol: 35 mg/dL (Low)\\nTriglycerides: 180 mg/dL (Normal)\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/medical-reports/process",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "medical-reports", "process"]
+				},
+				"description": "Process a complex medical report with multiple test panels"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
