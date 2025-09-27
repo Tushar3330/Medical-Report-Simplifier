@@ -18,7 +18,7 @@ app.use(helmet());
 // CORS configuration
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://yourdomain.com'] // Replace with your production domain
+        ? ['https://medical-report-simplifier-huivxn4ah.vercel.app', 'https://medical-report-simplifier.vercel.app'] 
         : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true
 }));
@@ -64,11 +64,13 @@ app.use((req, res, next) => {
 // Global error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-    logger.info(`🚀 Medical Report Simplifier API running on port ${PORT}`);
-    logger.info(`📖 Environment: ${process.env.NODE_ENV || 'development'}`);
-    logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
-});
+// Start server (only in local development)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        logger.info(`🚀 Medical Report Simplifier API running on port ${PORT}`);
+        logger.info(`📖 Environment: ${process.env.NODE_ENV || 'development'}`);
+        logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
+    });
+}
 
 module.exports = app;
