@@ -17,9 +17,20 @@ class OCRService {
         try {
             logger.info(`Starting OCR extraction for image`);
 
-            // Create a timeout promise
+            // Check if input is a buffer and log its size
+            if (Buffer.isBuffer(imageInput)) {
+                const sizeInMB = (imageInput.length / (1024 * 1024)).toFixed(2);
+                logger.info(`Image buffer size: ${sizeInMB} MB`);
+                
+                // Warn if image is very large
+                if (imageInput.length > 5 * 1024 * 1024) { // 5MB
+                    logger.warn(`Large image detected (${sizeInMB} MB). This may take longer to process.`);
+                }
+            }
+
+            // Create a timeout promise (60 seconds for better reliability)
             const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error('OCR processing timeout after 25 seconds')), 25000);
+                setTimeout(() => reject(new Error('OCR processing timeout after 60 seconds')), 60000);
             });
 
             // Optimized OCR settings for faster processing
@@ -29,10 +40,11 @@ class OCRService {
                         logger.debug(`OCR Progress: ${Math.round(m.progress * 100)}%`);
                     }
                 },
-                // Optimize for speed
-                tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK,
-                tessedit_ocr_engine_mode: Tesseract.OEM.LSTM_ONLY,
-                preserve_interword_spaces: '1'
+                // Optimize for speed and accuracy balance
+                tessedit_pageseg_mode: Tesseract.PSM.AUTO,
+                tessedit_ocr_engine_mode: Tesseract.OEM.DEFAULT,
+                preserve_interword_spaces: '1',
+                tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:/-%() ',
             });
 
             // Race between OCR and timeout
@@ -60,13 +72,14 @@ class OCRService {
             logger.error('OCR extraction failed:', error);
             
             // If OCR fails or times out, provide a fallback response
-            if (error.message.includes('timeout')) {
+            if (error.message && error.message.includes('timeout')) {
                 logger.warn('OCR timed out, providing fallback response');
                 return {
-                    tests_raw: ['OCR processing timed out - please try with text input or a clearer image'],
+                    tests_raw: [],
                     confidence: 0,
-                    raw_text: 'OCR processing failed due to timeout. Please try uploading a clearer image or use the text input option instead.',
-                    error: 'timeout'
+                    raw_text: '',
+                    error: 'timeout',
+                    error_message: 'OCR processing timed out. The image may be too complex, too large, or unclear. Please try: 1) Using a smaller/clearer image, 2) Cropping to just the test results section, or 3) Using the Text Input tab instead.'
                 };
             }
             

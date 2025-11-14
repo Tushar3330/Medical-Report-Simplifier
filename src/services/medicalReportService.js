@@ -33,8 +33,8 @@ class MedicalReportService {
                 return {
                     status: 'timeout',
                     reason: 'OCR processing timed out. Please try with a clearer image or use text input.',
-                    step: 'extraction',
-                    suggestion: 'For faster processing, try using the text input tab and copy-paste your lab results directly.'
+                    suggestion: 'For faster processing, try using the text input tab and copy-paste your lab results directly.',
+                    error_message: extractionResult.error_message || 'Processing timeout occurred'
                 };
             }
 

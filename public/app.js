@@ -97,6 +97,11 @@ class MedicalReportApp {
             return;
         }
 
+        // Warn about large files
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+            console.warn('Large image detected. Processing may take longer.');
+        }
+
         this.currentFile = file;
 
         // Show preview
@@ -105,6 +110,16 @@ class MedicalReportApp {
             document.getElementById('preview-img').src = e.target.result;
             document.getElementById('upload-content').classList.add('hidden');
             document.getElementById('image-preview').classList.remove('hidden');
+            
+            // Show helpful tip for large images
+            if (file.size > 3 * 1024 * 1024) { // 3MB
+                const uploadArea = document.getElementById('upload-area');
+                const tipElement = document.createElement('div');
+                tipElement.className = 'mt-2 text-sm text-yellow-600 bg-yellow-50 p-2 rounded';
+                tipElement.innerHTML = '<i class="fas fa-info-circle"></i> Large image detected. For faster processing, consider using a smaller or cropped image.';
+                uploadArea.appendChild(tipElement);
+                setTimeout(() => tipElement.remove(), 5000);
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -202,12 +217,16 @@ class MedicalReportApp {
             }, 1000);
 
             setTimeout(() => {
-                this.updateProcessingStep('This may take up to 30 seconds for complex images...');
+                this.updateProcessingStep('Processing image... This may take 30-60 seconds...');
             }, 5000);
 
             setTimeout(() => {
-                this.updateProcessingStep('Still processing... Please wait...');
-            }, 15000);
+                this.updateProcessingStep('Still processing... Almost there...');
+            }, 20000);
+
+            setTimeout(() => {
+                this.updateProcessingStep('This is taking longer than usual. Please wait...');
+            }, 40000);
 
             const response = await fetch(`${this.apiBase}/api/medical-reports/process`, {
                 method: 'POST',
@@ -220,9 +239,11 @@ class MedicalReportApp {
             if (result.status === 'ok') {
                 this.displayResults(result);
             } else if (result.status === 'timeout') {
+                const errorMsg = result.error_message || result.reason || 'OCR processing timed out';
+                const suggestion = result.suggestion || 'Please try with a clearer image or use text input';
                 this.showError(
-                    `${result.reason}\n\n${result.suggestion}\n\nTip: For faster results, switch to the "Text Input" tab and copy-paste your lab values directly.`,
-                    'OCR Timeout'
+                    `<strong>OCR Timeout</strong><br><br>${errorMsg}<br><br><strong>Suggestions:</strong><br>• Try using a smaller or clearer image<br>• Crop the image to show only the test results<br>• ${suggestion}<br><br><strong>Tip:</strong> For faster results, switch to the "Text Input" tab and copy-paste your lab values directly.`,
+                    'Processing Timeout'
                 );
             } else {
                 this.showError(result.reason || result.message || 'Image processing failed');

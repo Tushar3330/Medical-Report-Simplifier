@@ -65,11 +65,18 @@ app.use(errorHandler);
 
 // Start server (only in local development)
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
         logger.info(`🚀 Medical Report Simplifier API running on port ${PORT}`);
         logger.info(`📖 Environment: ${process.env.NODE_ENV || 'development'}`);
         logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
     });
+
+    // Set timeout for long-running OCR operations (90 seconds)
+    server.timeout = 90000;
+    server.keepAliveTimeout = 90000;
+    server.headersTimeout = 95000;
+    
+    logger.info(`⏱️  Server timeout set to 90 seconds for OCR processing`);
 }
 
 module.exports = app;
